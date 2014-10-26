@@ -47,20 +47,21 @@ void loop() {
 
     //Always Read
     unsigned char mesg[40];
-
-    char x[] = "done";
+    String tmp ="";
     
     int readsize = c.read(mesg,sizeof(mesg));
-    if(readsize!=0){
-      Serial.print("received_Data:");
-      mesg[readsize]='\0';
-      Serial.println((char*)mesg);    
-    }
 
-    if((char*)mesg == x){
+    for(int i=0; i<readsize; i++){
+        Serial.print((char)mesg[i]);
+        tmp = tmp + (char)mesg[i];
+    }
+    Serial.println(haha);
+
+    if(tmp.substring(0,readsize) == "done"){
       Serial.println("Done recognized");     
     }      
   }
   
 }
+
 
