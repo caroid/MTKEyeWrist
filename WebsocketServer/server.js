@@ -2,43 +2,43 @@ var WebSocketServer = require('ws').Server
   , wss = new WebSocketServer({port: 8081});
 var Obj = [
 	{
-	  "demo" : "youtube",
+	  "demo" : "glass",
 	  "action" : "test2",
 	  "result" : "swipe_up",
 	  "points" : ""
 	},
 	{
-	  "demo" : "youtube",
+	  "demo" : "glass",
 	  "action" : "test2",
 	  "result" : "swipe_right",
 	  "points" : ""
 	},
 	{
-	  "demo" : "youtube",
+	  "demo" : "glass",
 	  "action" : "test2",
 	  "result" : "swipe_down",
 	  "points" : ""
 	},
 	{
-	  "demo" : "youtube",
+	  "demo" : "glass",
 	  "action" : "test2",
 	  "result" : "swipe_left",
 	  "points" : ""
 	},
 		{
-	  "demo" : "youtube",
+	  "demo" : "glass",
 	  "action" : "test2",
 	  "result" : "map",
 	  "points" : ""
 	},
 	{
-	  "demo" : "youtube",
+	  "demo" : "glass",
 	  "action" : "test2",
 	  "result" : "email",
 	  "points" : ""
 	},
 	{
-	  "demo" : "youtube",
+	  "demo" : "glass",
 	  "action" : "test2",
 	  "result" : "music",
 	  "points" : ""

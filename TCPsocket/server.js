@@ -8,9 +8,9 @@ ws.on('open', function() {
 ws.on('message', function(data, flags) {
     if (data!="connection")
     {
-        console.log(data);
+        //console.log(data);
         var jsonData = JSON.parse(data);
-        console.log(jsonData.demo+" "+jsonData.result);
+        console.log(jsonData.demo+","+jsonData.result);
         if (Client_socket)
         {
             Client_socket.write(jsonData.demo+","+jsonData.result);
@@ -40,7 +40,7 @@ server.on('connection', function (socket) {
         }
         if(data == "test")
         {
-            console.log("dosomething");
+            //console.log("dosomething");
             console.log("Send:done");
             ws.send('send');
             //socket.write("done");

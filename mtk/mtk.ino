@@ -4,12 +4,36 @@
 
 #define SDA_PIN 8
 #define SCL_PIN 9
+#define Shock 10
 #define SITE_URL "10.0.1.22"
 #define WIFI_AP "Mike's iPhone" // replace with your setting
 #define WIFI_PWD "androidiphone" // replace with your setting
+//#define WIFI_AP "HomeNet" // replace with your setting
+//#define WIFI_PWD "ntpu49985052" // replace with your setting
+unsigned long time;
 LWiFiClient c;
 Adafruit_ssd1306syp display(SDA_PIN,SCL_PIN);
 char buf[30];
+//int Virbration; // define numeric variables val
+int flag_Time=0;
+int flag_Clear=0;
+
+uint32_t analogPin = A0;
+int val = 0;
+
+unsigned char mesg[40];
+int readsize;
+
+void DisplayActivation()
+{
+  display.clear();
+  drawEyeWrist();
+  display.setTextSize(3);
+  display.setCursor(20,20);
+  display.println("Hello");
+  display.drawLine(0,50,128,50,WHITE);
+  display.update();
+}
 
 void drawEyeWrist()
 {
@@ -113,19 +137,11 @@ void GestureShow(String tmp)
       G_music();
   }
 }
-
-
-
 void setup() {
-  
-  display.initialize();
 
+  //display
+  display.initialize();
   display.clear();
-  drawEyeWrist();
-  display.setTextSize(3);
-  display.setCursor(20,20);
-  display.println("Hello");
-  display.drawLine(0,50,128,50,WHITE);
   display.update();
 
   Serial.begin(9600);
@@ -155,50 +171,80 @@ void setup() {
 }
 
 void loop() {
-  if(c.connected()){
-    //c.print("connection");
-    //Serial.println("Send:connection");
-    
-    c.print("test");
-    Serial.println("Send:test");
-    delay(400);
-    //Always Read
-    unsigned char mesg[40];
-    String tmp ="";
-    int found=0;
-    int readsize = c.read(mesg,sizeof(mesg));
-
-    for(int i=0; i<readsize; i++){
-        tmp = tmp + (char)mesg[i];
-    }
-    if(tmp){
-      Serial.println(tmp); 
-      found = tmp.indexOf(',');
-      Serial.println(found);
-    }
-    
-    if(tmp.substring(0,found) == "youtube"){
+  val=analogRead(analogPin);
+  
+  //Serial.println(val);
+  if (val == 0 && (millis()-time) >10000)
+  {
+    if(flag_Clear==0){
       display.clear();
-      drawEyeWrist();
-      GestureShow(tmp.substring(found+1,tmp.length()));
-      display.drawLine(0,50,128,50,WHITE);
-      drawTV();
+      display.update();
+      flag_Time=0;
+      flag_Clear=1;
     }
-    else if(tmp.substring(0,found) == "mobile"){
-      display.clear();
-      drawEyeWrist();
-      GestureShow(tmp.substring(found+1,tmp.length()));
-      display.drawLine(0,50,128,50,WHITE);
-
-      drawPhone();
+  }
+  else
+  {
+    Serial.println("Active");
+    if(c.connected() && flag_Time){
+      c.print("test");
+      Serial.println("    Send:test");
+      delay(600);
+      //Always Read
+      String tmp ="";
+      int found=0;
+      readsize = c.read(mesg,sizeof(mesg));
       
+      if(readsize!=0){
+        for(int i=0; i<readsize; i++){
+            tmp = tmp + (char)mesg[i];
+        }
+        if(tmp!=""){
+          //need to uncomment in real!!
+          //time = millis();
+          Serial.print("    "); 
+          Serial.println(tmp); 
+          found = tmp.indexOf(',');
+
+          if(tmp.substring(0,found) == "youtube"){
+            display.clear();
+            drawEyeWrist();
+            GestureShow(tmp.substring(found+1,tmp.length()));
+            display.drawLine(0,50,128,50,WHITE);
+            drawTV();
+          }
+          else if(tmp.substring(0,found) == "mobile"){
+            display.clear();
+            drawEyeWrist();
+            GestureShow(tmp.substring(found+1,tmp.length()));
+            display.drawLine(0,50,128,50,WHITE);
+            drawPhone();
+          }
+          else if(tmp.substring(0,found) == "glass"){
+            display.clear();
+            drawEyeWrist();
+            GestureShow(tmp.substring(found+1,tmp.length()));
+            display.drawLine(0,50,128,50,WHITE);
+            drawGlass();
+          }   
+        }
+        else
+        {
+          DisplayActivation();
+          delay(1000);
+        }
+      }
     }
-    else if(tmp.substring(0,found) == "glass"){
-      display.clear();
-      drawEyeWrist();
-      GestureShow(tmp.substring(found+1,tmp.length()));
-      display.drawLine(0,50,128,50,WHITE);
-      drawGlass();
+    else
+    {
+      DisplayActivation();
+      delay(1000);
+    }
+
+    if(flag_Time==0){
+      time = millis();
+      flag_Time=1;    
+      flag_Clear=0;
     }
   }
 }
