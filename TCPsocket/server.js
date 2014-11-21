@@ -3,6 +3,7 @@ var WebSocket = require('ws');
 var ws = new WebSocket('ws://127.0.0.1:8081');
 var Client_socket;
 ws.on('open', function() {
+    console.log("in");
     ws.send('LinkitServerConnect');
 });
 ws.on('message', function(data, flags) {

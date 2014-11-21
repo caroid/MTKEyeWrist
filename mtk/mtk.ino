@@ -5,11 +5,13 @@
 #define SDA_PIN 8
 #define SCL_PIN 9
 #define Shock 10
-#define SITE_URL "10.0.1.22"
-#define WIFI_AP "Mike's iPhone" // replace with your setting
-#define WIFI_PWD "androidiphone" // replace with your setting
+#define SITE_URL "192.168.1.109"
+//#define WIFI_AP "Mike's iPhone" // replace with your setting
+//#define WIFI_PWD "androidiphone" // replace with your setting
 //#define WIFI_AP "HomeNet" // replace with your setting
 //#define WIFI_PWD "ntpu49985052" // replace with your setting
+#define WIFI_AP "Hsiu_iPhone" // replace with your setting
+#define WIFI_PWD "newiphone5" // replace with your setting
 unsigned long time;
 LWiFiClient c;
 Adafruit_ssd1306syp display(SDA_PIN,SCL_PIN);
@@ -95,11 +97,23 @@ void G_right()
   display.setCursor(20,20);
   display.println("Right");
 }
-void G_email()
+void G_click()
 {
   display.setTextSize(3);
   display.setCursor(20,20);
-  display.println("Email");
+  display.println("Click");
+}
+void G_back()
+{
+  display.setTextSize(3);
+  display.setCursor(30,20);
+  display.println("Back");
+}
+void G_email()
+{
+  display.setTextSize(3);
+  display.setCursor(30,20);
+  display.println("Play");
 }
 void G_music()
 {
@@ -136,6 +150,12 @@ void GestureShow(String tmp)
   else if(tmp == "music"){
       G_music();
   }
+  else if(tmp == "click"){
+      G_click();
+  }
+  else if(tmp == "back"){
+      G_back();
+  }
 }
 void setup() {
 
@@ -145,10 +165,10 @@ void setup() {
   display.update();
 
   Serial.begin(9600);
-  while(!Serial)
-  {
-    delay(100);
-  }
+  // while(!Serial)
+  // {
+  //   delay(100);
+  // }
 
   LWiFi.begin();
 
@@ -161,7 +181,7 @@ void setup() {
   }
 
   Serial.print("Connecting to server...");
-  if(!c.connect(SITE_URL, 8080))
+  if(!c.connect(SITE_URL, 8080))//port number may need to change
   {
     Serial.println("FAIL!");
     return;
@@ -173,8 +193,8 @@ void setup() {
 void loop() {
   val=analogRead(analogPin);
   
-  //Serial.println(val);
-  if (val == 0 && (millis()-time) >10000)
+  Serial.println(val);
+  if (val < 10 && (millis()-time) >10000)
   {
     if(flag_Clear==0){
       display.clear();
@@ -187,8 +207,8 @@ void loop() {
   {
     Serial.println("Active");
     if(c.connected() && flag_Time){
-      c.print("test");
-      Serial.println("    Send:test");
+      //c.print("test");
+      //Serial.println("    Send:test");
       delay(600);
       //Always Read
       String tmp ="";
@@ -201,7 +221,7 @@ void loop() {
         }
         if(tmp!=""){
           //need to uncomment in real!!
-          //time = millis();
+          time = millis();
           Serial.print("    "); 
           Serial.println(tmp); 
           found = tmp.indexOf(',');
@@ -226,7 +246,8 @@ void loop() {
             GestureShow(tmp.substring(found+1,tmp.length()));
             display.drawLine(0,50,128,50,WHITE);
             drawGlass();
-          }   
+          }
+          delay(1500);   
         }
         else
         {
